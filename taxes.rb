@@ -32,18 +32,18 @@ end
 
 Special_List = ["chocolates", "chocolate bar", "book", "headache pills"]
 
-def is_special(item)
+def is_special(text)
   temp = false
   Special_List.each do |special|
-    temp = temp || item.include?(special)
+    temp = temp || text.include?(special)
   end
   return temp
 end
 
-def what_class(cart)
-  if cart.include?("imported")
+def what_class(text, cart)
+  if text.include?("imported")
     Imported.new(cart[0].to_i, cart[-1].to_f)
-  elsif is_special(cart)
+  elsif is_special(text)
     Special.new(cart[0].to_i, cart[-1].to_f)
   else
     Local.new(cart[0].to_i, cart[-1].to_f)
@@ -57,25 +57,27 @@ sum = 0
 sales_tax = 0
 while true
   puts "input the item on your cart. like '1 imported box of chocolates at 10.00' or '1 book at 12.49'"
-  cart[count] = gets.chomp.split(" ")
-  if cart[count][0] == "none"
+  text = gets.chomp
+  cart[count] = text.split(" ")
+  if text == "none"
     break
   else
-    item[count] = what_class(cart[count])
+    item[count] = what_class(text, cart[count])
     item[count].tax
     cart[count][-1] = (item[count].after_tax).round(2)
     sum += item[count].after_tax
-    puts sum
-    puts "what is on the list \n#{item}"
-    sales_tax += (item[count].amount * item[count].price * item[count].tax_rate).round(2)
+    # puts item[count].after_tax
+    # puts sum
+    # puts "what is on the list \n#{item}"
+    sales_tax += (item[count].amount * item[count].price * item[count].tax_rate * 20).round.to_f / 20.0
   end
 
   count += 1
 end
 
 cart.each do |cart|
-  puts cart[0..-3].join(" ") + ":#{cart[-1]}"
+  puts cart[0..-3].join(" ") + ": #{cart[-1]}"
 end
 
-puts "Sales Taxes: #{sales_tax}"
-puts "Total: #{sum}"
+puts "Sales Taxes: #{sales_tax.round(2)}"
+puts "Total: #{((sum*20).round.to_f/20).round(2)}"
